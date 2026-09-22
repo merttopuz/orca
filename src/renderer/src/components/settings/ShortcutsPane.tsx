@@ -35,6 +35,7 @@ import {
 } from './shortcut-binding-list-mutations'
 import { useMountedRef } from '@/hooks/useMountedRef'
 import { translate } from '@/i18n/i18n'
+import { translateKeybindingTitle } from '@/i18n/keybinding-catalog-labels'
 import { useEditablePluginCommands } from '@/store/plugin-panels'
 import { buildShortcutDefinitionCatalog } from './shortcut-definition-catalog'
 import { getClientCreationActionPolicy } from '@/lib/client-creation-action-policy'
@@ -192,7 +193,10 @@ export function ShortcutsPane(): React.JSX.Element {
     if (blockingConflict) {
       const labels = blockingConflict.actionIds
         .filter((id) => id !== actionId)
-        .map((id) => definitionsByAction.get(id)?.title ?? id)
+        .map((id) => {
+          const conflictDefinition = definitionsByAction.get(id)
+          return conflictDefinition ? translateKeybindingTitle(conflictDefinition) : id
+        })
         .join(', ')
       setErrors((prev) => ({
         ...prev,

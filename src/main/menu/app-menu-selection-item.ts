@@ -35,3 +35,31 @@ export function createAppMenuSelectionItem({
     }
   }
 }
+
+/** Why: a focused terminal/native-chat pane is not a native editable control,
+ *  so raw Electron paste cannot know which Orca surface owns it - route
+ *  through IPC when a window is focused, and fall back to the native
+ *  first-responder paste for macOS panels (open/save, Go to Folder) that
+ *  leave no focused BrowserWindow. */
+export function createAppMenuPasteItem({
+  label,
+  isMac
+}: {
+  label: string
+  isMac: boolean
+}): Electron.MenuItemConstructorOptions {
+  return {
+    label,
+    accelerator: 'CmdOrCtrl+V',
+    click: () => {
+      const focusedWindow = BrowserWindow.getFocusedWindow()
+      if (focusedWindow) {
+        focusedWindow.webContents.send('ui:appMenuPaste')
+        return
+      }
+      if (isMac) {
+        Menu.sendActionToFirstResponder('paste:')
+      }
+    }
+  }
+}
