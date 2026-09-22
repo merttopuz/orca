@@ -9,7 +9,8 @@ import { assertNoCarriageReturnsInSource } from './verify-mobile-web-bundle.mjs'
 import { assertMobileWebBundleBuilt } from './verify-packaged-mobile-web-bundle.cjs'
 
 const projectDir = fileURLToPath(new URL('../..', import.meta.url))
-const defaultBundleDir = join(projectDir, 'out', 'mobile-web-app')
+// HYBRID-RC: follows the builder's output root above.
+const defaultBundleDir = join(projectDir, 'out', 'mobile-web')
 const manifestContract = join(
   projectDir,
   'src',
