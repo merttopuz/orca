@@ -24,6 +24,9 @@ export type ShortcutDefinitionCatalog = {
   conflictByAction: Map<KeybindingActionId, string[]>
 }
 
+/** Builds the grouped keybinding list the Shortcuts settings pane renders,
+ *  including per-action conflict warnings from both static and dynamic
+ *  (plugin, Mission Control) conflict sources. */
 export function buildShortcutDefinitionCatalog(options: {
   disabledTuiAgents: readonly TuiAgent[]
   pluginCommands: readonly ActivePluginCommand[]

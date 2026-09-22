@@ -2,6 +2,9 @@ import { BrowserWindow, Menu, webContents } from 'electron'
 
 export type AppMenuSelectionAction = 'copy' | 'select-all'
 
+/** Why: routes copy/select-all through IPC when a window is focused (so a
+ *  custom Orca surface like a terminal or native-chat pane can own the
+ *  action), and falls back to the native first-responder command otherwise. */
 export function createAppMenuSelectionItem({
   action,
   label,

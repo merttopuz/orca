@@ -1,5 +1,6 @@
 import { translate } from '@/i18n/i18n'
 
+/** Shown when a captured chord fails to normalize into a storable binding. */
 export function getUnableToParseShortcutMessage(): string {
   return translate(
     'auto.components.settings.ShortcutsPane.unableToParseShortcut',
@@ -7,6 +8,7 @@ export function getUnableToParseShortcutMessage(): string {
   )
 }
 
+/** Shown when an action id no longer resolves to a known keybinding definition. */
 export function getShortcutUnavailableMessage(): string {
   return translate(
     'auto.components.settings.ShortcutsPane.shortcutUnavailable',
@@ -14,6 +16,8 @@ export function getShortcutUnavailableMessage(): string {
   )
 }
 
+/** Shared by the save-time blocking conflict error and the passive per-row
+ *  conflict warning so both read as the same translated sentence. */
 export function getBindingConflictMessage(binding: string, conflictLabels: string): string {
   return translate(
     'auto.components.settings.ShortcutsPane.bindingConflict',
