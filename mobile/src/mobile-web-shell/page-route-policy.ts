@@ -68,6 +68,10 @@ export type RoutePatternRefusal = (typeof ROUTE_PATTERN_REFUSALS)[number]
  * one this reads. Anything else is refused by name and matches nothing, so its route stays native
  * — the same answer a phone too old to have heard of rest segments gives, and the answer a shell
  * should give for a pattern whose tail it cannot say it understood.
+ *
+ * Narrower than expo-router on purpose, and the one place the two differ: its own matcher does
+ * take a non-trailing rest, `h/*page/tail` matching `/h/a/b/tail` at 55.0.18. This refuses it
+ * rather than copying a shape nothing produces and this shell cannot reason about.
  */
 export function routePatternRefusal(pattern: string): RoutePatternRefusal | null {
   const segments = pattern.split('/')
