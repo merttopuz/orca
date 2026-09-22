@@ -128,7 +128,8 @@ describe('the native session route that hands off to the shell', () => {
   it('renders the native screen while the flag read is still settling', async () => {
     // The element is built on every render and mounted only by `fallback`, so the count below is
     // what a settling read costs: one native screen, before the switch has an answer.
-    dependencies.storage.delete('orca:mobileWebShellEnabled')
+    // HYBRID-RC: written off rather than deleted, because an unset key now reads on.
+    dependencies.storage.set('orca:mobileWebShellEnabled', 'false')
     await renderSession()
     expect(dependencies.routes).toEqual([])
     expect(dependencies.natives).toBeGreaterThan(0)

@@ -111,7 +111,8 @@ describe('the catch-all switch', () => {
   })
 
   it('refuses while the flag read is still settling', async () => {
-    dependencies.storage.clear()
+    // HYBRID-RC: written off rather than cleared, because an unset key now reads on.
+    dependencies.storage.set('orca:mobileWebShellEnabled', 'false')
     await render()
     expect(dependencies.routes).toEqual([])
     expect(dependencies.refusals.length).toBeGreaterThan(0)
