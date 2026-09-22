@@ -74,7 +74,6 @@ describe('the native chat older-history page', () => {
 
   /** A full first window with a cursor, which is what arms `hasMore` and lets a page go out. */
   function clientAnswering(page: () => Promise<unknown>): RpcClient {
-    const sendRequest = vi.fn(page) as unknown as RpcClient['sendRequest']
     const subscribe: RpcClient['subscribe'] = vi.fn((_method, _params, onData) => {
       onData({
         type: 'snapshot',
@@ -84,8 +83,8 @@ describe('the native chat older-history page', () => {
       })
       return () => {}
     })
-    // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: the hook reads only these two members of the client.
-    return { sendRequest, subscribe } as unknown as RpcClient
+    // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: the hook reads only these two members, and `RpcSuccess` requires `result`, so a result-absent reply has no type.
+    return { sendRequest: vi.fn(page), subscribe } as unknown as RpcClient
   }
 
   async function pageAgainst(client: RpcClient): Promise<void> {
