@@ -135,7 +135,9 @@ const MOBILE_WEB_SHELL_KEY = 'orca:mobileWebShellEnabled'
  * one `__DEV__` test would be two things to keep true.
  */
 export function mobileWebShellFlagCanBeOn(): boolean {
-  return typeof __DEV__ !== 'undefined' && __DEV__
+  // HYBRID-RC: the OTA package is a release binary that must mount the page, so the build-kind
+  // fence is open here. `__DEV__` stays false; only this answer changed.
+  return true
 }
 
 export async function loadMobileWebShellEnabled(): Promise<boolean> {
@@ -144,7 +146,9 @@ export async function loadMobileWebShellEnabled(): Promise<boolean> {
   }
   try {
     const raw = await AsyncStorage.getItem(MOBILE_WEB_SHELL_KEY)
-    return raw === 'true'
+    // HYBRID-RC: absent reads ON, so the device run mounts the page on first launch. A stored
+    // value still decides, which is what keeps the Troubleshoot toggle able to switch it off.
+    return raw === null ? true : raw === 'true'
   } catch {
     return false
   }

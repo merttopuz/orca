@@ -268,6 +268,8 @@ describe.each(SWITCHES)('the $name switch on a development build', (entry) => {
   })
 
   it('mounts native once when the read resolves off, and nothing else', async () => {
+    // HYBRID-RC: written rather than left unset, because unset now reads on.
+    dependencies.storage.set(FLAG_KEY, 'false')
     renderUnsettled(entry.Route)
     await act(async () => {})
     expect(dependencies.natives).toEqual([entry.native])
@@ -276,11 +278,13 @@ describe.each(SWITCHES)('the $name switch on a development build', (entry) => {
 })
 
 /**
- * The build every store user is on, where the flag cannot be turned on at all.
+ * HYBRID-RC: the build every store user is on, where the flag can now be turned on.
  *
- * A neutral frame is worth a native mount only when the flag could resolve on. Outside `__DEV__`
- * it cannot, so the hook holds `false` from its first render and the `pending` branch is
- * unreachable here: the switch commits the native renderer on frame one and never revises it.
+ * The build-kind fence is open on this branch, so `mobileWebShellFlagCanBeOn` answers the same in
+ * every build and the hook starts at `null` everywhere. That makes the neutral frame reachable
+ * here and the stored value, not the build kind, the thing that decides — which is exactly what
+ * the development-build block above measures. These cases say so for a release build rather than
+ * asserting the old first-frame-native shortcut, which this branch removed.
  */
 describe.each(SWITCHES)('the $name switch on a release build', (entry) => {
   beforeEach(() => {
@@ -293,39 +297,47 @@ describe.each(SWITCHES)('the $name switch on a release build', (entry) => {
     setDevelopmentBuild(false)
   })
 
-  it('commits native on its first frame and never mounts the neutral screen', async () => {
-    // A flag a development build left in the container, which a store build shares a bundle id
-    // with: still unreachable, and still no neutral frame in front of it.
+  it('paints the neutral frame first and then mounts the shell, never native', async () => {
     dependencies.storage.set(FLAG_KEY, 'true')
     renderUnsettled(entry.Route)
-    expect(dependencies.neutrals).toBe(0)
-    expect(dependencies.natives).toEqual([entry.native])
+    expect(dependencies.neutrals).toBe(1)
+    expect(dependencies.natives).toEqual([])
     expect(dependencies.shells).toEqual([])
     await act(async () => {
       await Promise.resolve()
     })
-    expect(dependencies.neutrals).toBe(0)
-    expect(dependencies.natives).toEqual([entry.native])
-    expect(dependencies.shells).toEqual([])
+    expect(dependencies.natives).toEqual([])
+    expect(dependencies.shells).toEqual([entry.pathname])
   })
 
-  it('reaches no storage at all, which is what makes the first frame decidable', async () => {
-    // The same fact the initialiser rests on: `loadMobileWebShellEnabled` answers `false` outside
-    // `__DEV__` before it looks at the key, so there is nothing to wait for and nothing to read.
+  it('reads storage, which is what makes the flag decide in a release build', async () => {
     dependencies.storage.set(FLAG_KEY, 'true')
     renderUnsettled(entry.Route)
     await act(async () => {
       await Promise.resolve()
     })
-    expect(dependencies.reads).toBe(0)
+    expect(dependencies.reads).toBe(1)
+  })
+
+  // The device run's native-parity step: the Troubleshoot toggle writes this value, and it is the
+  // only thing on this branch that puts a release build back on the native screen.
+  it('mounts native once the Troubleshoot toggle has written an explicit off', async () => {
+    dependencies.storage.set(FLAG_KEY, 'false')
+    renderUnsettled(entry.Route)
+    await act(async () => {
+      await Promise.resolve()
+    })
+    expect(dependencies.natives).toEqual([entry.native])
+    expect(dependencies.shells).toEqual([])
   })
 
   it('does the same when the bundler defined no `__DEV__` at all', async () => {
     setDevelopmentBuild(undefined)
     dependencies.storage.set(FLAG_KEY, 'true')
     renderUnsettled(entry.Route)
-    expect(dependencies.neutrals).toBe(0)
-    expect(dependencies.natives).toEqual([entry.native])
+    expect(dependencies.neutrals).toBe(1)
+    expect(dependencies.natives).toEqual([])
     await act(async () => {})
+    expect(dependencies.shells).toEqual([entry.pathname])
   })
 })

@@ -532,15 +532,47 @@ describe('hybrid shell flag', () => {
     expect(AsyncStorage.getItem).toHaveBeenCalledWith('orca:mobileWebShellEnabled')
   })
 
+  // HYBRID-RC: the build-kind fence is open, so these cases say the key is read and obeyed in
+  // every build kind rather than refused outside __DEV__.
   it.each([
     ['a release build', false],
     ['a runtime with no __DEV__ at all', undefined]
-  ])('is off in %s even with the key left on, and never reads it', async (_label, isDev) => {
+  ])('reads the key in %s as well, rather than refusing it', async (_label, isDev) => {
     setDevelopmentBuild(isDev)
-    // The value a development build left behind in a container the install-over kept.
     vi.mocked(AsyncStorage.getItem).mockResolvedValue('true')
 
+    await expect(loadMobileWebShellEnabled()).resolves.toBe(true)
+    expect(AsyncStorage.getItem).toHaveBeenCalledWith('orca:mobileWebShellEnabled')
+  })
+
+  it.each([
+    ['a development build', true],
+    ['a release build', false],
+    ['a runtime with no __DEV__ at all', undefined]
+  ])('reads an unset key as on in %s', async (_label, isDev) => {
+    setDevelopmentBuild(isDev)
+    vi.mocked(AsyncStorage.getItem).mockResolvedValue(null)
+
+    await expect(loadMobileWebShellEnabled()).resolves.toBe(true)
+  })
+
+  // What the device run switches off with, and the reason the default is absence rather than a
+  // constant: a stored value still decides, in every build kind.
+  it.each([
+    ['a development build', true],
+    ['a release build', false],
+    ['a runtime with no __DEV__ at all', undefined]
+  ])('obeys an explicit off written by the Troubleshoot toggle in %s', async (_label, isDev) => {
+    setDevelopmentBuild(isDev)
+    vi.mocked(AsyncStorage.getItem).mockResolvedValue('false')
+
     await expect(loadMobileWebShellEnabled()).resolves.toBe(false)
-    expect(AsyncStorage.getItem).not.toHaveBeenCalled()
+  })
+
+  it('is off when the store cannot be read at all', async () => {
+    setDevelopmentBuild(false)
+    vi.mocked(AsyncStorage.getItem).mockRejectedValue(new Error('no store'))
+
+    await expect(loadMobileWebShellEnabled()).resolves.toBe(false)
   })
 })

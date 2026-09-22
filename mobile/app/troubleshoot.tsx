@@ -9,7 +9,9 @@ import { useTroubleshootDiagnostics } from '../src/diagnostics/use-troubleshoot-
 // schemas at load; nothing mounts, no host is looked up and no request is made. This repo has no
 // `__DEV__`-conditional `require` idiom to trim it with — every `require` in `mobile/src` is a Metro
 // asset path — so introducing one is a change for the shell in Phase B, not for this row.
-const isDevelopmentBuild = typeof __DEV__ !== 'undefined' && __DEV__
+// HYBRID-RC: true regardless of build kind, so the release binary's Troubleshoot screen still
+// carries the toggle the device run switches the page off with.
+const isDevelopmentBuild = true
 
 export default function NativeTroubleshootRoute() {
   const router = useRouter()

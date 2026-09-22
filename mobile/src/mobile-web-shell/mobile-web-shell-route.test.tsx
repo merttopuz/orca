@@ -84,10 +84,12 @@ describe('the hybrid shell route', () => {
     setDevelopmentBuild(true)
   })
 
-  it('redirects to the host screen with the flag unset, and mounts nothing', async () => {
+  // HYBRID-RC: an unset key reads on, so an untouched install mounts the shell rather than
+  // redirecting. The redirect is now reached only by an explicit off, which the case below pins.
+  it('mounts the shell for this host with the flag unset, because unset reads on', async () => {
     const tree = await renderRoute()
-    expect(byName(tree, 'Redirect').map((node) => node.props.href)).toEqual(['/h/host-1'])
-    expect(dependencies.mounted).toEqual([])
+    expect(byName(tree, 'Redirect')).toEqual([])
+    expect(dependencies.mounted).toEqual(['host-1'])
   })
 
   it('redirects with the flag explicitly off', async () => {
@@ -132,12 +134,14 @@ describe('the hybrid shell route', () => {
     expect(BRIDGE_ROUTE_PATHNAME_PATTERN.test('/h/..')).toBe(false)
   })
 
-  it('redirects a store build whose container kept a flag a development build set', async () => {
+  // HYBRID-RC: the build-kind fence is open, so a build with no `__DEV__` mounts on the same
+  // stored value a development build would. Its off case is the explicit-off test above.
+  it('mounts on a stored flag with no `__DEV__` defined at all', async () => {
     setDevelopmentBuild(undefined)
     dependencies.storage.set('orca:mobileWebShellEnabled', 'true')
     const tree = await renderRoute()
-    expect(byName(tree, 'Redirect')).toHaveLength(1)
-    expect(dependencies.mounted).toEqual([])
+    expect(byName(tree, 'Redirect')).toEqual([])
+    expect(dependencies.mounted).toEqual(['host-1'])
   })
 
   it('neither redirects nor mounts until the flag has been read', async () => {
