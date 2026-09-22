@@ -8745,7 +8745,9 @@
           "781cb74d22": "Terminal bölmelerinden çalışır.",
           "cb02e00202": "Terminal",
           "d8c988dab4": "~/.orca/keybindings.json",
-          "shortcutUnavailable": "Kısayol artık kullanılamıyor."
+          "shortcutUnavailable": "Kısayol artık kullanılamıyor.",
+          "bindingConflict": "{{value0}}, {{value1}} ile çakışıyor.",
+          "unableToParseShortcut": "Kısayol ayrıştırılamadı."
         },
         "SourceControlAiActionRecipeDefaults": {
           "2576299196": "bağımsız değişkenler",

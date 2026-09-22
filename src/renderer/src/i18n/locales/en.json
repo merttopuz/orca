@@ -8745,7 +8745,9 @@
           "781cb74d22": "Runs from terminal panes.",
           "cb02e00202": "Terminal",
           "d8c988dab4": "~/.orca/keybindings.json",
-          "shortcutUnavailable": "Shortcut is no longer available."
+          "shortcutUnavailable": "Shortcut is no longer available.",
+          "bindingConflict": "{{value0}} conflicts with {{value1}}.",
+          "unableToParseShortcut": "Unable to parse shortcut."
         },
         "SourceControlAiActionRecipeDefaults": {
           "2576299196": "args",

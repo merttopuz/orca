@@ -36,6 +36,11 @@ import {
 import { useMountedRef } from '@/hooks/useMountedRef'
 import { translate } from '@/i18n/i18n'
 import { translateKeybindingTitle } from '@/i18n/keybinding-catalog-labels'
+import {
+  getBindingConflictMessage,
+  getShortcutUnavailableMessage,
+  getUnableToParseShortcutMessage
+} from './shortcut-error-messages'
 import { useEditablePluginCommands } from '@/store/plugin-panels'
 import { buildShortcutDefinitionCatalog } from './shortcut-definition-catalog'
 import { getClientCreationActionPolicy } from '@/lib/client-creation-action-policy'
@@ -165,20 +170,14 @@ export function ShortcutsPane(): React.JSX.Element {
     if (!Array.isArray(normalizedResult)) {
       setErrors((prev) => ({
         ...prev,
-        [actionId]: normalizedResult.ok ? 'Unable to parse shortcut.' : normalizedResult.error
+        [actionId]: normalizedResult.ok ? getUnableToParseShortcutMessage() : normalizedResult.error
       }))
       return false
     }
 
     const definition = definitionForAction(actionId)
     if (!definition) {
-      setErrors((prev) => ({
-        ...prev,
-        [actionId]: translate(
-          'auto.components.settings.ShortcutsPane.shortcutUnavailable',
-          'Shortcut is no longer available.'
-        )
-      }))
+      setErrors((prev) => ({ ...prev, [actionId]: getShortcutUnavailableMessage() }))
       return false
     }
     const defaults = getEffectiveKeybindingsForDefinition(definition, platform, {})
@@ -200,7 +199,10 @@ export function ShortcutsPane(): React.JSX.Element {
         .join(', ')
       setErrors((prev) => ({
         ...prev,
-        [actionId]: `${formatKeybindingList([blockingConflict.binding], platform)} conflicts with ${labels}.`
+        [actionId]: getBindingConflictMessage(
+          formatKeybindingList([blockingConflict.binding], platform),
+          labels
+        )
       }))
       return false
     }
