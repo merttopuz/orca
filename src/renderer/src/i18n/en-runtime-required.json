@@ -2606,6 +2606,7 @@
       },
       "keybindings": {
         "groups": {
+          "agents": "Agents",
           "browser": "Browser",
           "editors": "Editors",
           "fileExplorer": "File Explorer",

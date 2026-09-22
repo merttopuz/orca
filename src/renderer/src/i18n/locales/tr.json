@@ -1336,7 +1336,8 @@
             "switchInputSource": {
               "title": "Giriş kaynağını / dilini değiştir (native)"
             }
-          }
+          },
+          "newAgentTab": "Yeni {{value0}} sekmesi"
         },
         "groups": {
           "global": "Genel",
@@ -1347,7 +1348,8 @@
           "fileExplorer": "Dosya Gezgini",
           "settings": "Ayarlar",
           "terminalPanes": "Terminal Bölmeleri",
-          "quickCommands": "Hızlı Komutlar"
+          "quickCommands": "Hızlı Komutlar",
+          "agents": "Ajanlar"
         }
       }
     },

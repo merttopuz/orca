@@ -1336,7 +1336,8 @@
             "switchInputSource": {
               "title": "Switch input source / language (native)"
             }
-          }
+          },
+          "newAgentTab": "New {{value0}} tab"
         },
         "groups": {
           "global": "Global",
@@ -1347,7 +1348,8 @@
           "fileExplorer": "File Explorer",
           "settings": "Settings",
           "terminalPanes": "Terminal Panes",
-          "quickCommands": "Quick Commands"
+          "quickCommands": "Quick Commands",
+          "agents": "Agents"
         }
       }
     },
